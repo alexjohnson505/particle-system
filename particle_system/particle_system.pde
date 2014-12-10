@@ -50,9 +50,29 @@ void setup() {
 void draw() {
   background(255);
   
-  // Create particles on mouse movement
+  // Create particles
   if (abs(mouseX-pmouseX) > 0.0001 | VOLCANO_MODE) {
     
+    // Add a particle to a system
+    system.add();
+  }
+  
+  system.update();
+}
+
+// Represent a system/group of particles
+public class System {
+  ArrayList particles;
+  int lifespan;
+  
+  System(){
+     particles = new ArrayList();
+     lifespan = 100;
+  }
+  
+  // Add new particles
+  void add(){
+ 
     // The initial position, initial velocity,
     // initial size, initial color, initial transparency,
     // lifetime, and mass can be set at creation.
@@ -70,7 +90,7 @@ void draw() {
       position = new PVector(WIDTH/2, HEIGHT/1.8);
       
       // Create upward velocity, with random horizontal spread
-      velocity = new PVector(random(-1.2, 1.2), -5);
+      velocity = new PVector(random(-1.2, 1.2), -8);
 
       // Color
       colour = color(255, 0, 0); 
@@ -103,30 +123,12 @@ void draw() {
     // Random Mass
     float mass = random(.5, 2);
 
-    system.add(new Particle(position, velocity, size, colour, transparency, lifetime, mass)); 
-  }
-  
-  system.update();
-}
-
-// Represent a system/group of particles
-public class System {
-  ArrayList particles;
-  int lifespan;
-  
-  System(){
-     particles = new ArrayList();
-     lifespan = 100;
-  }
-  
-  // Add new particles
-  void add(Particle p){
+    Particle p = new Particle(position, velocity, size, colour, transparency, lifetime, mass); 
     
-    // imit the total number of particles.
+    // limit the total number of particles.
     if (particles.size() < TOTAL){
       particles.add(p);  
     }
-    
   }
   
   // 'Game Tick' -> Update objects
