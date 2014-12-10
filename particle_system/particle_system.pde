@@ -39,7 +39,6 @@ void setup() {
   system = new System();
   
   noStroke();
-  fill(100);
   smooth();
 }
 
@@ -48,7 +47,33 @@ void draw() {
   
   // Create particles on mouse movement
   if (abs(mouseX-pmouseX) > 0.0001) {
-    system.add(new Particle()); 
+    
+    // The initial position, initial velocity,
+    // initial size, initial color, initial transparency,
+    // lifetime, and mass can be set at creation.
+    
+    // Current position
+    PVector position = new PVector(mouseX, mouseY);
+    
+    // Velocity is determined by the velocity of the mouse
+    PVector velocity = new PVector(mouseX-pmouseX, mouseY-pmouseY);
+    
+    // Diameter
+    float size = 12;
+    
+    // Color
+    color colour = color(100); 
+    
+    // Opacity
+    float transparency = 255;
+    
+    // Lifespan
+    int lifetime = LIFESPAN;
+    
+    // Random Mass
+    float mass = random(0, 2);
+
+    system.add(new Particle(position, velocity, size, colour, transparency, lifetime, mass)); 
   }
   
   system.update();
@@ -69,6 +94,7 @@ public class System {
     particles.add(p);
   }
   
+  // 'Game Tick' -> Update objects
   void update(){
     
     // iterate through particles
@@ -89,30 +115,42 @@ public class System {
 
 // Represent a single particle in the system 
 public class Particle {
-  PVector location;
+  PVector position;
   PVector velocity;
   PVector acceleration;
-  int age;
   
+  int age;        // Current Age
+  int lifetime;   // Lifespan
   
-  public Particle() {
-      
-    // Current position
-    location = new PVector(mouseX, mouseY);
-      
-    // Velocity is determined by the velocity of the mouse
-    velocity = new PVector(mouseX-pmouseX, mouseY-pmouseY);
-
+  float size;
+  color colour;
+  float transparency;
+  
+  public Particle(PVector _position, PVector _velocity, float _size, color _color, float _transparency, int _lifetime, float _mass){
+    
+    // Position
+    position = _position;
+    
+    // Velocity
+    velocity = _velocity;
+    
     // Acceleration. Make the system a little more "chaotic"
     // by multiplying a random wildcard to the gravity value.
-    acceleration = new PVector(0f, gravity * random(0, 2));  
-
+    acceleration = new PVector(0f, gravity * _mass);
+    
+    size = _size;
+    colour = _color;
+    transparency = _transparency;
+    lifetime = _lifetime;
+    
     // newborn particle
     age = 0;
   }
+    
   
   public void draw(){
-      ellipse(location.x, location.y, 12, 12);
+    fill(colour, transparency);
+    ellipse(position.x, position.y, size, size);
   }
  
   public boolean update() {
@@ -121,9 +159,9 @@ public class Particle {
     velocity.add(acceleration);
     
     // Use velocity to determin the next location
-    location.add(velocity);
+    position.add(velocity);
      
-     if (age > LIFESPAN) {
+     if (age > lifetime) {
        return false;
      } else {
        age++; 
