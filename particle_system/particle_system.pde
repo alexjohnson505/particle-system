@@ -29,7 +29,7 @@ ArrayList particles;
 int LIFESPAN = 100;
 
 // Gravity
-PVector acceleration =  new PVector(0f, 0.025);
+PVector acceleration =  new PVector(0f, 0.3);
 
 void setup() {
   size(400, 400); 
@@ -77,7 +77,7 @@ public class Particle {
   }
   
   public void draw(){
-      
+      noStroke();
       ellipse(location.x, location.y, 10, 10);
   }
  
