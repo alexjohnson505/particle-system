@@ -58,12 +58,10 @@ void draw() {
 public class System {
   ArrayList particles;
   int lifespan;
-  PVector acceleration;
   
   System(){
      particles = new ArrayList();
      lifespan = 100;
-     acceleration = new PVector(0f, gravity);
   }
   
   // Add new particles
@@ -79,7 +77,7 @@ public class System {
       // Extract one particle at a time
       Particle p = (Particle)particles.get(i);
     
-      if(!p.update(acceleration)) {
+      if(!p.update()) {
         particles.remove(i);  
       }
     
@@ -93,33 +91,45 @@ public class System {
 public class Particle {
   PVector location;
   PVector velocity;
+  PVector acceleration;
   int age;
   
+  
   public Particle() {
-      location = new PVector(mouseX, mouseY);
       
-      // Velocity is determined by the velocity of the mouse
-      velocity = new PVector(mouseX-pmouseX, mouseY-pmouseY);   
+    // Current position
+    location = new PVector(mouseX, mouseY);
+      
+    // Velocity is determined by the velocity of the mouse
+    velocity = new PVector(mouseX-pmouseX, mouseY-pmouseY);
 
-      age = 0;
+    // Acceleration. Make the system a little more "chaotic"
+    // by multiplying a random wildcard to the gravity value.
+    acceleration = new PVector(0f, gravity * random(0, 2));  
+
+    // newborn particle
+    age = 0;
   }
   
   public void draw(){
       ellipse(location.x, location.y, 12, 12);
   }
  
-  public boolean update(PVector acceleration) {
-     velocity.add(acceleration);
-     location.add(velocity);
+  public boolean update() {
+    
+    // Update velocity  
+    velocity.add(acceleration);
+    
+    // Use velocity to determin the next location
+    location.add(velocity);
      
      if (age > LIFESPAN) {
        return false;
+     } else {
+       age++; 
+       return true;
      }
-     
-     age++;
-     return true;
   }
-    
 }
 
 
