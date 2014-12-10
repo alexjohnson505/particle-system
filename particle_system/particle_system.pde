@@ -59,6 +59,8 @@ void draw() {
     
     PVector position = new PVector(0,0);
     PVector velocity = new PVector(0,0);
+    color colour;
+    float transparency;
     
     // If the sketch is set to "VOLCANO_MODE", we set
     // a single source in the center
@@ -69,6 +71,12 @@ void draw() {
       
       // Create upward velocity, with random horizontal spread
       velocity = new PVector(random(-1.2, 1.2), -5);
+
+      // Color
+      colour = color(255, 0, 0); 
+      
+      // Opacity
+      transparency = random(50, 255);
       
     // OTHERWISE, we use the mouse to determing particle source
     } else {
@@ -78,23 +86,22 @@ void draw() {
       
       // Velocity is determined by the velocity of the mouse
       velocity = new PVector((mouseX-pmouseX) / 2, (mouseY-pmouseY) / 2);
+      
+      // Color
+      colour = color(100); 
+    
+      // Opacity
+      transparency = 255;
     }
   
-    
     // Diameter
     float size = 12;
-    
-    // Color
-    color colour = color(100); 
-    
-    // Opacity
-    float transparency = 255;
     
     // Lifespan
     int lifetime = LIFESPAN;
     
     // Random Mass
-    float mass = random(0, 2);
+    float mass = random(.5, 2);
 
     system.add(new Particle(position, velocity, size, colour, transparency, lifetime, mass)); 
   }
