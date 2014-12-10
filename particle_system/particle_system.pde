@@ -140,11 +140,16 @@ public class System {
       // Extract one particle at a time
       Particle p = (Particle)particles.get(i);
     
-      if(!p.update()) {
+      // Check if particle has aged out.
+      if(!p.alive()) {
         particles.remove(i);  
       }
     
+      // Render current particle
       p.draw();
+      
+      // Update position for next tick
+      p.update();
     }
   }
   
@@ -184,20 +189,25 @@ public class Particle {
     age = 0;
   }
     
-  
+  // Draw shape
   public void draw(){
     fill(colour, transparency);
     ellipse(position.x, position.y, size, size);
   }
- 
-  public boolean update() {
+  
+  // Update position and velocity
+  public void update(){
     
     // Update velocity  
     velocity.add(acceleration);
     
     // Use velocity to determin the next location
     position.add(velocity);
-     
+  }
+ 
+  // Is the particle still living?
+  public boolean alive() {
+    
      if (age > lifetime) {
        return false;
      } else {
