@@ -23,15 +23,22 @@
  ****************************/
  
 // Settings
-int LIFESPAN = 80;     // Game ticks before particles expire
-int TOTAL = 100;       // Max allowed particles
-float GRAVITY = 0.3;   // Downward pull on velocity
+int LIFESPAN = 80;             // Game ticks before particles expire
+int TOTAL = 100;               // Max allowed particles
+float GRAVITY = 0.3;           // Downward pull on velocity
+boolean VOLCANO_MODE = true;   // Set a single source of particles?
+                               // Otherwise, use mouse for source. 
+
+// Sketch size
+int WIDTH  = 600;
+int HEIGHT = 600;
+
 
 // Init a particle system
 System system;
 
 void setup() {
-  size(600, 600); 
+  size(WIDTH, HEIGHT); 
   
   // Initialize a new particle system
   system = new System();
@@ -44,17 +51,35 @@ void draw() {
   background(255);
   
   // Create particles on mouse movement
-  if (abs(mouseX-pmouseX) > 0.0001) {
+  if (abs(mouseX-pmouseX) > 0.0001 | VOLCANO_MODE) {
     
     // The initial position, initial velocity,
     // initial size, initial color, initial transparency,
     // lifetime, and mass can be set at creation.
     
-    // Current position
-    PVector position = new PVector(mouseX, mouseY);
+    PVector position = new PVector(0,0);
+    PVector velocity = new PVector(0,0);
     
-    // Velocity is determined by the velocity of the mouse
-    PVector velocity = new PVector(mouseX-pmouseX, mouseY-pmouseY);
+    // If the sketch is set to "VOLCANO_MODE", we set
+    // a single source in the center
+    if (VOLCANO_MODE){
+      
+      // Create position from center
+      position = new PVector(WIDTH/2, HEIGHT/1.8);
+      
+      // Create upward velocity, with random horizontal spread
+      velocity = new PVector(random(-1.2, 1.2), -5);
+      
+    // OTHERWISE, we use the mouse to determing particle source
+    } else {
+      
+      // Create position from mouse position
+      position = new PVector(mouseX, mouseY);
+      
+      // Velocity is determined by the velocity of the mouse
+      velocity = new PVector((mouseX-pmouseX) / 2, (mouseY-pmouseY) / 2);
+    }
+  
     
     // Diameter
     float size = 12;
