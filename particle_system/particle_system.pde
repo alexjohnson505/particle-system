@@ -21,15 +21,13 @@
   Final Exam
    
  ****************************/
+ 
+// Settings
+int LIFESPAN = 80;     // Game ticks before particles expire
+int TOTAL = 100;       // Max allowed particles
+float GRAVITY = 0.3;   // Downward pull on velocity
 
-// Global Objects
-ArrayList particles;
-
-// Global Parameters
-int LIFESPAN = 100;
-float gravity = 0.3;
-
-// Init var for a particle system
+// Init a particle system
 System system;
 
 void setup() {
@@ -91,7 +89,12 @@ public class System {
   
   // Add new particles
   void add(Particle p){
-    particles.add(p);
+    
+    // imit the total number of particles.
+    if (particles.size() < TOTAL){
+      particles.add(p);  
+    }
+    
   }
   
   // 'Game Tick' -> Update objects
@@ -136,7 +139,7 @@ public class Particle {
     
     // Acceleration. Make the system a little more "chaotic"
     // by multiplying a random wildcard to the gravity value.
-    acceleration = new PVector(0f, gravity * _mass);
+    acceleration = new PVector(0f, GRAVITY * _mass);
     
     size = _size;
     colour = _color;
