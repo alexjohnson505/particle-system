@@ -27,17 +27,24 @@ ArrayList particles;
 
 // Global Parameters
 int LIFESPAN = 100;
+float gravity = 0.3;
 
 // Gravity
 PVector acceleration =  new PVector(0f, 0.3);
 
+// Init var for a particle system
+System system;
+
 void setup() {
   size(400, 400); 
+  
+  // Initialize a new particle system
+  system = new System();
+  
   stroke(0);
   strokeWeight(3);
   fill(150);
   smooth();
-  particles = new ArrayList();
 }
 
 void draw() {
@@ -45,20 +52,43 @@ void draw() {
   
   // Create particles on mouse movement
   if (abs(mouseX-pmouseX) > 0.0001) {
-    particles.add(new Particle()); 
+    system.add(new Particle()); 
   }
   
-  for (int i = particles.size()-1; i >= 0; i--) {
+  system.update();
+ 
+}
+
+// Represent a system/group of particles
+public class System {
+  ArrayList particles;
+  int lifespan;
+  PVector acceleration;
+  
+  System(){
+     particles = new ArrayList();
+     lifespan = 100;
+     acceleration = new PVector(0f, gravity);
+  }
+  
+  void add(Particle p){
+    particles.add(p);
+  }
+  
+  void update(){
+    for (int i = particles.size()-1; i >= 0; i--) {
     
-    // Extract one particle at a time
-    Particle p = (Particle)particles.get(i);
+      // Extract one particle at a time
+      Particle p = (Particle)particles.get(i);
     
-    if(!p.update()) {
-      particles.remove(i);  
+      if(!p.update()) {
+        particles.remove(i);  
+      }
+    
+      p.draw();
     }
-    
-    p.draw();
-  }  
+  }
+  
 }
 
 // Represent a single particle in the system 
