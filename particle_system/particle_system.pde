@@ -29,21 +29,17 @@ ArrayList particles;
 int LIFESPAN = 100;
 float gravity = 0.3;
 
-// Gravity
-PVector acceleration =  new PVector(0f, 0.3);
-
 // Init var for a particle system
 System system;
 
 void setup() {
-  size(400, 400); 
+  size(600, 600); 
   
   // Initialize a new particle system
   system = new System();
   
-  stroke(0);
-  strokeWeight(3);
-  fill(150);
+  noStroke();
+  fill(100);
   smooth();
 }
 
@@ -56,7 +52,6 @@ void draw() {
   }
   
   system.update();
- 
 }
 
 // Represent a system/group of particles
@@ -71,17 +66,20 @@ public class System {
      acceleration = new PVector(0f, gravity);
   }
   
+  // Add new particles
   void add(Particle p){
     particles.add(p);
   }
   
   void update(){
+    
+    // iterate through particles
     for (int i = particles.size()-1; i >= 0; i--) {
     
       // Extract one particle at a time
       Particle p = (Particle)particles.get(i);
     
-      if(!p.update()) {
+      if(!p.update(acceleration)) {
         particles.remove(i);  
       }
     
@@ -107,11 +105,10 @@ public class Particle {
   }
   
   public void draw(){
-      noStroke();
-      ellipse(location.x, location.y, 10, 10);
+      ellipse(location.x, location.y, 12, 12);
   }
  
-  public boolean update() {
+  public boolean update(PVector acceleration) {
      velocity.add(acceleration);
      location.add(velocity);
      
