@@ -10,6 +10,10 @@ A basic 2D particle system.
 
 Written for CS4300 Computer Graphics
   
+### Instructions
+
+Run 'particle_system/particle_system.pde' using the [Processing](processing.org) application.
+
 ### Thanks
 
 Using code examples written by Benjamin of 
