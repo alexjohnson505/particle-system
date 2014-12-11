@@ -87,10 +87,12 @@ public class System {
     if (VOLCANO_MODE){
       
       // Create position from center
-      position = new PVector(WIDTH/2, HEIGHT/1.8);
+      // position = new PVector(WIDTH/2, HEIGHT/1.8);
+      position = new PVector(mouseX, mouseY);
       
       // Create upward velocity, with random horizontal spread
-      velocity = new PVector(random(-1.2, 1.2), -8);
+      velocity = new PVector(random(-1.2, 1.2), -8); // Volcano
+      // velocity = new PVector(-10, 0); // Hose
 
       // Color
       colour = color(255, 0, 0); 
@@ -135,14 +137,22 @@ public class System {
   void update(){
     
     // iterate through particles
-    for (int i = particles.size()-1; i >= 0; i--) {
-    
+    // for (int i = particles.size()-1; i >= 0; i--) {
+    for (int i = 0; i < particles.size(); i++){
+
       // Extract one particle at a time
       Particle p = (Particle)particles.get(i);
-    
+      
       // Check if particle has aged out.
       if(!p.alive()) {
         particles.remove(i);  
+      }
+      
+      // Detect collisions
+      // p.collisions();
+      for (int j = 0; j < particles.size(); j++){
+        Particle p2 = (Particle)particles.get(j);
+        p.collision(p2);
       }
     
       // Render current particle
@@ -214,6 +224,38 @@ public class Particle {
        age++; 
        return true;
      }
+  }
+  
+  // Check particle2 for a collision
+  public boolean collision(Particle p2){
+    
+    // Calculate distance between 2 points    
+    float distance = position.dist(p2.position);
+    
+    // Collison dectection has 2 cases to satisfy:
+    //  a.) Are the two particles touching?
+    //  b.) Are the two particles atleast 20 ticks old?
+    //      This prevents particles are the coming out of
+    //      the same source from acting up.
+    
+    if (distance < size && distance != 0 && age > 20){
+      
+      // Debug: Draw collision box
+      // float hitX = (position.x + p2.position.x) / 2;
+      // float hitY = (position.y + p2.position.y) / 2;
+      // fill(250);
+      // ellipse(hitX, hitY, 20, 20);//
+
+      // On collision, "bouce" horizontally
+      velocity = new PVector(velocity.x * -1, velocity.y, 0);
+      
+      // If a particle collides, change it's color to blue
+      colour = color(150, 150, 250);
+      
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
