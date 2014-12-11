@@ -3,12 +3,10 @@
   A Simple Particle System
   by Alex Johnson
   
-  This demo aims to emulate and re-create
-  a simple particle system for demonstration
-  purposes. 
+  This demo aims to create a very simple 
+  particle system for demonstration purposes. 
   
-  Using demo and code examples written
-  by Benjamin of blog.datasingularity.com:
+  Using code examples written by Benjamin of 
   http://blog.datasingularity.com/?p=335
   
   Original Source can be found here:
@@ -24,15 +22,13 @@
  
 // Settings
 int LIFESPAN = 80;             // Game ticks before particles expire
-int TOTAL = 100;               // Max allowed particles
+int TOTAL = 130;               // Max allowed particles
 float GRAVITY = 0.3;           // Downward pull on velocity
-boolean VOLCANO_MODE = true;   // Set a single source of particles?
-                               // Otherwise, use mouse for source. 
+boolean VOLCANO_MODE = true;   // Should particles start with similar velocity?
 
 // Sketch size
-int WIDTH  = 600;
+int WIDTH  = 400;
 int HEIGHT = 600;
-
 
 // Init a particle system
 System system;
@@ -57,17 +53,16 @@ void draw() {
     system.add();
   }
   
+  // Update particle status
   system.update();
 }
 
-// Represent a system/group of particles
+// Represents a system/group of particles
 public class System {
   ArrayList particles;
-  int lifespan;
   
   System(){
      particles = new ArrayList();
-     lifespan = 100;
   }
   
   // Add new particles
@@ -77,22 +72,16 @@ public class System {
     // initial size, initial color, initial transparency,
     // lifetime, and mass can be set at creation.
     
-    PVector position = new PVector(0,0);
     PVector velocity = new PVector(0,0);
     color colour;
     float transparency;
     
-    // If the sketch is set to "VOLCANO_MODE", we set
-    // a single source in the center
+    // If the sketch is set to "VOLCANO_MODE", we 
+    // adjust the initial velocity of all particles
     if (VOLCANO_MODE){
-      
-      // Create position from center
-      // position = new PVector(WIDTH/2, HEIGHT/1.8);
-      position = new PVector(mouseX, mouseY);
       
       // Create upward velocity, with random horizontal spread
       velocity = new PVector(random(-1.2, 1.2), -8); // Volcano
-      // velocity = new PVector(-10, 0); // Hose
 
       // Color
       colour = color(255, 0, 0); 
@@ -100,11 +89,8 @@ public class System {
       // Opacity
       transparency = random(50, 255);
       
-    // OTHERWISE, we use the mouse to determing particle source
+    // OTHERWISE, we use the mouse velocity to determing particle velocity
     } else {
-      
-      // Create position from mouse position
-      position = new PVector(mouseX, mouseY);
       
       // Velocity is determined by the velocity of the mouse
       velocity = new PVector((mouseX-pmouseX) / 2, (mouseY-pmouseY) / 2);
@@ -116,6 +102,9 @@ public class System {
       transparency = 255;
     }
   
+    // Create source from mouse position      
+    PVector position = new PVector(mouseX, mouseY);
+    
     // Diameter
     float size = 12;
     
@@ -125,6 +114,7 @@ public class System {
     // Random Mass
     float mass = random(.5, 2);
 
+    // Create new particle object
     Particle p = new Particle(position, velocity, size, colour, transparency, lifetime, mass); 
     
     // limit the total number of particles.
@@ -137,7 +127,6 @@ public class System {
   void update(){
     
     // iterate through particles
-    // for (int i = particles.size()-1; i >= 0; i--) {
     for (int i = 0; i < particles.size(); i++){
 
       // Extract one particle at a time
@@ -149,7 +138,6 @@ public class System {
       }
       
       // Detect collisions
-      // p.collisions();
       for (int j = 0; j < particles.size(); j++){
         Particle p2 = (Particle)particles.get(j);
         p.collision(p2);
@@ -165,7 +153,7 @@ public class System {
   
 }
 
-// Represent a single particle in the system 
+// Represents a single particle in the system 
 public class Particle {
   PVector position;
   PVector velocity;
@@ -187,7 +175,7 @@ public class Particle {
     velocity = _velocity;
     
     // Acceleration. Make the system a little more "chaotic"
-    // by multiplying a random wildcard to the gravity value.
+    // by multiplying mass to the gravity
     acceleration = new PVector(0f, GRAVITY * _mass);
     
     size = _size;
@@ -232,11 +220,12 @@ public class Particle {
     // Calculate distance between 2 points    
     float distance = position.dist(p2.position);
     
-    // Collison dectection has 2 cases to satisfy:
+    // Collison dectection has 3 cases to satisfy:
     //  a.) Are the two particles touching?
-    //  b.) Are the two particles atleast 20 ticks old?
-    //      This prevents particles are the coming out of
-    //      the same source from acting up.
+    //  b.) Is the particle checking against itself?
+    //  c.) Are the two particles at least 20 ticks old?
+    //      -> This prevents particles from the same
+    //         source location from acting up.
     
     if (distance < size && distance != 0 && age > 20){
       
@@ -246,7 +235,7 @@ public class Particle {
       // fill(250);
       // ellipse(hitX, hitY, 20, 20);//
 
-      // On collision, "bouce" horizontally
+      // On collision, "bounce" horizontally
       velocity = new PVector(velocity.x * -1, velocity.y, 0);
       
       // If a particle collides, change it's color to blue
